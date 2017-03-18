@@ -33,9 +33,19 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile "com.android.support:support-v4:${android_support_lib_version}"
+    compile 'jp.wasabeef:glide-transformations:2.0.2'
+    // If you want to use the GPU Filters
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 
     compile 'org.parceler:parceler-api:1.1.6'
     annotationProcessor 'org.parceler:parceler:1.1.6'
+
+    // Retrofit & OkHttp
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+
+    // JSON Converter
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
 
     testCompile 'junit:junit:4.12'
 }
