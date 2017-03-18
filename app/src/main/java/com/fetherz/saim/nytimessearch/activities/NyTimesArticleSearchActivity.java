@@ -1,12 +1,22 @@
-package com.fetherz.saim.nytimessearch;
+package com.fetherz.saim.nytimessearch.activities;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
 
-public class NyTimesArticleSearchActivity extends AppCompatActivity {
+import com.fetherz.saim.nytimessearch.R;
+
+import java.util.Calendar;
+
+public class NyTimesArticleSearchActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+
+    ArticleSearchSettingsDialog articleSearchSettingsDialog;
+    Calendar calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +51,25 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            openSettings();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openSettings() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        articleSearchSettingsDialog = ArticleSearchSettingsDialog.newInstance();
+        articleSearchSettingsDialog.show(fragmentManager, "search_settings");
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        articleSearchSettingsDialog.setDate(calendar.getTime());
     }
 }

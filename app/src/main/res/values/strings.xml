@@ -1,4 +1,20 @@
 <resources>
     <string name="app_name">Search Articles</string>
     <string name="action_settings">Settings</string>
+
+    <string-array name="article_search_sort_order">
+        <item>Oldest</item>
+        <item>Newest</item>
+    </string-array>
+
+    <string name="samples_title">Hello title</string>
+    <string name="samples_subhead">Hello Subhead</string>
+    <string name="samples_hint_username">Username</string>
+    <string name="samples_hint_email">E-Mail</string>
+    <string name="begin_date">Begin Date</string>
+    <string name="sort_order">Sort Order</string>
+    <string name="news_desk_values">News Desk Values</string>
+    <string name="arts">Arts</string>
+    <string name="fashion">Fashion</string>
+    <string name="sports">Sports</string>
 </resources>

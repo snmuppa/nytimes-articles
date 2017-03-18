@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/fab_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:id="@+id/layoutSettings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutFloatingButton"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="@dimen/regular_offset">
+
+
+        <TextView
+            android:id="@+id/tvBeginDate"
+            style="@style/TextAppearance.Theme.Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"
+            android:text="@string/begin_date" />
+
+        <EditText
+            android:id="@+id/etDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:inputType="date"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/tvSortOrder"
+            style="@style/TextAppearance.Theme.Small"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"
+            android:text="@string/sort_order" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
+            android:id="@+id/spnSortOrder"
+            android:entries="@array/article_search_sort_order"
+            android:layout_marginBottom="24dp">
+        </Spinner>
+
+        <TextView
+            android:id="@+id/tvNewsDesks"
+            style="@style/TextAppearance.Theme.Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"
+            android:text="@string/news_desk_values" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/ivArts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_palette"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arts"
+                android:id="@+id/cbArts"
+                android:checked="false"
+                android:layout_alignTop="@+id/ivArts"
+                android:layout_toRightOf="@+id/ivArts"
+                android:layout_marginBottom="8dp"
+                android:theme="@style/Theme.Checkbox"/>
+
+            <ImageView
+                android:id="@+id/ivFashion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:layout_below="@+id/ivArts"
+                android:layout_alignLeft="@+id/ivArts"
+                android:layout_alignStart="@+id/ivArts"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_run"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fashion"
+                android:id="@+id/cbFashion"
+                android:checked="false"
+                android:layout_below="@+id/cbArts"
+                android:layout_toRightOf="@+id/ivFashion"
+                android:layout_alignTop="@+id/ivFashion"
+                android:layout_alignLeft="@+id/cbArts"
+                android:layout_alignStart="@+id/cbArts"
+                android:layout_marginBottom="8dp"
+                android:theme="@style/Theme.Checkbox"/>
+
+            <ImageView
+                android:id="@+id/ivSports"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:layout_below="@+id/ivFashion"
+                android:layout_alignLeft="@+id/ivArts"
+                android:layout_alignStart="@+id/ivArts"
+                android:src="@drawable/ic_sports"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sports"
+                android:id="@+id/cbSports"
+                android:checked="false"
+                android:layout_marginBottom="8dp"
+                android:layout_below="@+id/cbFashion"
+                android:layout_toRightOf="@+id/ivSports"
+                android:layout_alignTop="@+id/ivSports"
+                android:layout_alignLeft="@+id/cbFashion"
+                android:layout_alignStart="@+id/cbFashion"
+                android:theme="@style/Theme.Checkbox"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/layoutFloatingButton"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:layout_alignParentBottom="true"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/regular_offset"
+            android:src="@drawable/ic_done" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</RelativeLayout>
