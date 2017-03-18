@@ -3,9 +3,9 @@ package com.fetherz.saim.nytimessearch.utils;
 import android.util.Log;
 
 /**
+ * Utility for logging
  * @see <a href="http://www.andreas-schrade.de/">Reference</a>
  */
-
 public class LogUtil {
     private static final String LOG_PREFIX = "article_search";
 

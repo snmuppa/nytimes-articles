@@ -14,7 +14,6 @@ import static com.fetherz.saim.nytimessearch.utils.LogUtil.makeLogTag;
 /**
  * Created by sm032858 on 3/17/17.
  */
-
 public class BaseFragment extends Fragment {
     private static final String TAG = makeLogTag(BaseFragment.class);
 

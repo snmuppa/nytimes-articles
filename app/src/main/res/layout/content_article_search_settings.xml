@@ -141,7 +141,7 @@
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/layoutFloatingButton"
         android:layout_width="match_parent"
-        android:layout_height="128dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:fitsSystemWindows="true">
 
@@ -150,7 +150,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_margin="@dimen/regular_offset"
+            android:layout_margin="@dimen/list_item_artile_vertical_margin"
             android:src="@drawable/ic_done" />
 
     </android.support.design.widget.CoordinatorLayout>
