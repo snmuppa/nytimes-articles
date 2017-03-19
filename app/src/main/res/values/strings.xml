@@ -17,4 +17,6 @@
     <string name="arts">Arts</string>
     <string name="fashion">Fashion</string>
     <string name="sports">Sports</string>
+    <string name="article_image_content_description">Article Image</string>
+    <string name="article_moniker">Moniker</string>
 </resources>

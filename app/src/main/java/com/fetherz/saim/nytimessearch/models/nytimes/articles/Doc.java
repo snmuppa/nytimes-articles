@@ -26,7 +26,6 @@ public class Doc {
     @Expose
     int printPage;
 
-
     @SerializedName("source")
     @Expose
     String source;
@@ -75,6 +74,10 @@ public class Doc {
     @Expose
     int wordCount;
 
+    public static final int ARTICLE_WITH_NO_MEDIA = 0;
+    public static final int ARTICLE_WITH_MEDIA = 1;
+    public static final String ARTICLE_BASE_URI = "http://www.nytimes.com/";
+
     public Doc() {}
 
     public String getWebUrl() {
@@ -108,7 +111,6 @@ public class Doc {
     public void setPrintPage(int printPage) {
         this.printPage = printPage;
     }
-
 
     public String getSource() {
         return source;
@@ -206,4 +208,21 @@ public class Doc {
         this.wordCount = wordCount;
     }
 
+    public int getViewType() {
+        if(this.multimedia == null || multimedia.size() == 0) {
+            return ARTICLE_WITH_NO_MEDIA;
+        }
+        return ARTICLE_WITH_MEDIA;
+    }
+
+    public String getMultiMediaThumbnailImage(){
+        if(this.multimedia != null || multimedia.size() != 0){
+            for(Multimedium media : multimedia) {
+                if(media != null && media.getSubtype().equals("thumbnail")) {
+                    return String.format("%s%s", ARTICLE_BASE_URI, media.getUrl());
+                }
+            }
+        }
+        return "";
+    }
 }
