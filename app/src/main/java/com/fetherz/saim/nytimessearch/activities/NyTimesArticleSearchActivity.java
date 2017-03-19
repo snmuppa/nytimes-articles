@@ -6,6 +6,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -47,6 +48,9 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
     @BindView(R.id.rvArticles)
     RecyclerView rvArticles;
 
+    @BindView(R.id.swipeContainer)
+    SwipeRefreshLayout swipeContainer;
+
     ArticleRecyclerViewAdapter articleRecyclerViewAdapter;
     ArticleSearchSettingsDialog articleSearchSettingsDialog;
     // Store a member variable for the listener
@@ -73,6 +77,7 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
         ButterKnife.bind(NyTimesArticleSearchActivity.this);
         setSupportActionBar(toolbar);
         setRecyclerView();
+        setSwipeRefreshContainer();
         articleService = ((ArticleApplication) getApplicationContext()).getArticleService();
         articleService.addListener(this);
     }
@@ -151,6 +156,35 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
         articleService.requestArticles(API_KEY_VALUE, searchQuery, "news_desk:(\"Sports\")", "20160101", "newest", page);
     }
 
+    private void setSwipeRefreshContainer() {
+        // Lookup the swipe container view
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                swipeRefreshArticleData();
+            }
+        });
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+    }
+
+    private void swipeRefreshArticleData() {
+        //reset the articles before refresh
+        resetEndlessScroller();
+
+        //fetch data based on current cached query, starting at page 0
+        fetchArticles(currentSearchQuery, START_PAGE);
+    }
+
     /**
      *
      * @param item
@@ -218,6 +252,9 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
             articles.addAll(this.article.getResponse().getDocs());
             articleRecyclerViewAdapter.notifyItemRangeInserted(currSize, this.article.getResponse().getDocs().size() - 1);
         }
+
+        // Now we call setRefreshing(false) to signal refresh has finished
+        swipeContainer.setRefreshing(false);
     }
 
     /**
