@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import com.fetherz.saim.nytimessearch.R;
 import com.fetherz.saim.nytimessearch.adapters.ArticleRecyclerViewAdapter;
 import com.fetherz.saim.nytimessearch.application.ArticleApplication;
+import com.fetherz.saim.nytimessearch.eventlisteners.EndlessRecyclerViewScrollListener;
 import com.fetherz.saim.nytimessearch.models.nytimes.articles.Article;
 import com.fetherz.saim.nytimessearch.models.nytimes.articles.Doc;
 import com.fetherz.saim.nytimessearch.models.search.settings.FilterSelection;
@@ -47,15 +48,19 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
     RecyclerView rvArticles;
 
     ArticleRecyclerViewAdapter articleRecyclerViewAdapter;
-
     ArticleSearchSettingsDialog articleSearchSettingsDialog;
+    // Store a member variable for the listener
+    EndlessRecyclerViewScrollListener scrollListener;
+
     Calendar calendar;
     ArticleService articleService;
     Article article;
 
-    private static final String API_KEY_VALUE = "ca395a3acdfb48cb9ccfd66c7171f522";
-    private static final int START_PAGE = 0;
+    static final String API_KEY_VALUE = "ca395a3acdfb48cb9ccfd66c7171f522";
+    static final int START_PAGE = 0;
     List<Doc> articles;
+
+    String currentSearchQuery = "ny times";
 
     /**
      *
@@ -67,9 +72,40 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
         setContentView(R.layout.activity_ny_times_article_search);
         ButterKnife.bind(NyTimesArticleSearchActivity.this);
         setSupportActionBar(toolbar);
-
+        setRecyclerView();
         articleService = ((ArticleApplication) getApplicationContext()).getArticleService();
         articleService.addListener(this);
+    }
+
+    private void setRecyclerView() {
+        // Initialize articles
+        articles = new ArrayList<>();
+
+        // Create adapter passing in the initial article data
+        articleRecyclerViewAdapter = new ArticleRecyclerViewAdapter(articles);
+
+        // Attach the adapter to the recyclerview to populate items
+        rvArticles.setAdapter(articleRecyclerViewAdapter);
+
+        // First param is number of columns and second param is orientation i.e Vertical or Horizontal
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+        // Set layout manager to position the items
+        rvArticles.setLayoutManager(gridLayoutManager);
+
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                fetchArticles(currentSearchQuery, page); //ny times API page numbers start from 0
+            }
+        };
+
+        // Adds the scroll listener to RecyclerView
+        rvArticles.addOnScrollListener(scrollListener);
     }
 
     /**
@@ -87,24 +123,15 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
             @Override
             public boolean onQueryTextSubmit(String searchQuery) {
 
-                // Initialize movies
-                articles = new ArrayList<>();
+                //reset the endless scroller before re-fetching based on new query
+                resetEndlessScroller();
 
-                // Create adapter passing in the initial movie data
-                articleRecyclerViewAdapter = new ArticleRecyclerViewAdapter(articles);
-
-                // Attach the adapter to the recyclerview to populate items
-                rvArticles.setAdapter(articleRecyclerViewAdapter);
-
-                // First param is number of columns and second param is orientation i.e Vertical or Horizontal
-                StaggeredGridLayoutManager gridLayoutManager =
-                        new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-
-                // Set layout manager to position the items
-                rvArticles.setLayoutManager(gridLayoutManager);
+                //cache the current query
+                currentSearchQuery = searchQuery;
 
                 // perform query here
-                fetchArticles(searchQuery, START_PAGE);
+                fetchArticles(currentSearchQuery, START_PAGE);
+
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
@@ -121,7 +148,7 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
     }
 
     private void fetchArticles(String searchQuery, int page) {
-        articleService.requestArticles(API_KEY_VALUE, searchQuery, "news_desk:(\"Sports\")", "20170101", "newest", page);
+        articleService.requestArticles(API_KEY_VALUE, searchQuery, "news_desk:(\"Sports\")", "20160101", "newest", page);
     }
 
     /**
@@ -187,8 +214,9 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
 
         if(this.article != null && this.article.getResponse() != null && this.article.getResponse().getDocs() != null)
         {
-            articles.addAll(0, this.article.getResponse().getDocs());
-            articleRecyclerViewAdapter.notifyItemRangeInserted(0, this.article.getResponse().getDocs().size());
+            int currSize = articleRecyclerViewAdapter.getItemCount();
+            articles.addAll(this.article.getResponse().getDocs());
+            articleRecyclerViewAdapter.notifyItemRangeInserted(currSize, this.article.getResponse().getDocs().size() - 1);
         }
     }
 
@@ -208,5 +236,14 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
     public void onDestroy() {
         articleService.removeListener(this);
         super.onDestroy();
+    }
+
+    private void resetEndlessScroller() {
+        // 1. First, clear the array of data
+        articles.clear();
+        // 2. Notify the adapter of the update
+        articleRecyclerViewAdapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
+        // 3. Reset endless scroll listener when performing a new search
+        scrollListener.resetState();
     }
 }

@@ -3,6 +3,8 @@ package com.fetherz.saim.nytimessearch.images;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -14,6 +16,8 @@ import com.fetherz.saim.nytimessearch.R;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
+import static com.bumptech.glide.load.resource.bitmap.BitmapResource.obtain;
+
 /**
  * Created by sm032858 on 3/19/17.
  */
@@ -21,11 +25,11 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 public class ImageLoaderImpl implements ImageLoader {
     @Override
     public void loadImage(String url, final ImageView imageView) {
-        Glide.with(imageView.getContext()).load(url).error(R.drawable.ic_alert).transform(new BitmapTransformation(imageView.getContext()) {
+        Glide.with(imageView.getContext()).load(url).placeholder(R.drawable.ic_photo).error(R.drawable.ic_alert).transform(new BitmapTransformation(imageView.getContext()) {
             @Override
             protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
                 BlurTransformation blurTransformation = new BlurTransformation(imageView.getContext());
-                Resource<Bitmap> blurredBitmapResource = blurTransformation.transform(BitmapResource.obtain(toTransform, pool), 10, 1);
+                Resource<Bitmap> blurredBitmapResource = blurTransformation.transform(obtain(toTransform, pool), 10, 1);
 
                 Bitmap combinedBitmap;
                 Bitmap bottom = blurredBitmapResource.get();
@@ -36,6 +40,13 @@ public class ImageLoaderImpl implements ImageLoader {
 
                 Canvas comboImage = new Canvas(combinedBitmap);
                 comboImage.drawBitmap(toTransform, 0f, 0f, null);
+
+                float radius = 85.0f; // angle of round corners
+                Path clipPath = new Path();
+                RectF rect = new RectF(0, 0, toTransform.getWidth(), toTransform.getHeight());
+                clipPath.addRoundRect(rect, radius, radius, Path.Direction.CW);
+
+                comboImage.clipPath(clipPath);
 
                 Matrix matrix = new Matrix();
                 matrix.postRotate(180);

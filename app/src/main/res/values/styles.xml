@@ -29,7 +29,7 @@
     </style>
 
     <style name="TextAppearance.Theme.Small" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/theme_primary_dark</item>
+        <item name="android:textColor">@color/theme_primary_accent</item>
         <item name="android:typeface">monospace</item>
     </style>
 
@@ -53,7 +53,7 @@
     </style>
 
     <style name="Theme.Checkbox" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/theme_primary_light</item>
+        <item name="colorAccent">@color/theme_primary_accent</item>
 
     </style>
 

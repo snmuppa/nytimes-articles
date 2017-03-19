@@ -38,10 +38,6 @@ public class Doc {
     @Expose
     Headline headline;
 
-    @SerializedName("keywords")
-    @Expose
-    List<Keyword> keywords = null;
-
     @SerializedName("pub_date")
     @Expose
     String pubDate;
@@ -57,10 +53,6 @@ public class Doc {
     @SerializedName("section_name")
     @Expose
     String sectionName;
-
-    @SerializedName("byline")
-    @Expose
-    Byline byline;
 
     @SerializedName("type_of_material")
     @Expose
@@ -136,14 +128,6 @@ public class Doc {
         this.headline = headline;
     }
 
-    public List<Keyword> getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(List<Keyword> keywords) {
-        this.keywords = keywords;
-    }
-
     public String getPubDate() {
         return pubDate;
     }
@@ -174,14 +158,6 @@ public class Doc {
 
     public void setSectionName(String sectionName) {
         this.sectionName = sectionName;
-    }
-
-    public Byline getByline() {
-        return byline;
-    }
-
-    public void setByline(Byline byline) {
-        this.byline = byline;
     }
 
     public String getTypeOfMaterial() {
