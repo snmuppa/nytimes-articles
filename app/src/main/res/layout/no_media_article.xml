@@ -14,18 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/list_item_article_space">
-        <ImageView
-            android:id="@+id/ivArticle"
-            android:background="@android:color/transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@string/article_image_content_description"
-            tools:src="@drawable/ic_photo"
-            />
 
         <TextView
-            android:id="@+id/tvArticleTitle"
+            android:id="@+id/tvNoMediaArticleTitle"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +25,7 @@
             />
 
         <TextView
-            android:id="@+id/tvArticleMoniker"
+            android:id="@+id/tvNoMediaArticleMoniker"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +38,7 @@
             android:layout_margin="@dimen/list_item_artile_vertical_margin"/>
 
         <TextView
-            android:id="@+id/tvArticleSnippet"
+            android:id="@+id/tvNoMediaArticleSnippet"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

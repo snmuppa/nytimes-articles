@@ -10,7 +10,6 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fetherz.saim.nytimessearch.R;
@@ -20,50 +19,56 @@ import com.fetherz.saim.nytimessearch.utils.LogUtil;
 import java.util.List;
 
 /**
- * Created by sm032858 on 3/18/17.
+ * Created by sm032858 on 3/19/17.
  */
-public class MultiMediaArticleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    ImageView ivArticle;
+public class NoMediaArticleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    TextView tvArticleTitle;
+    TextView tvNoMediaArticleTitle;
 
-    TextView tvArticleMoniker;
+    TextView tvNoMediaArticleMoniker;
 
-    TextView tvArticleSnippet;
+    TextView tvNoMediaArticleSnippet;
 
     private List<Doc> articles;
 
     private Context context;
 
-    public MultiMediaArticleViewHolder(View v, List<Doc> articles) {
+    public NoMediaArticleViewHolder(View v, List<Doc> articles) {
         super(v);
         context = v.getContext();
 
-        ivArticle = (ImageView) v.findViewById(R.id.ivArticle);
-        tvArticleTitle = (TextView) v.findViewById(R.id.tvArticleTitle);
-        tvArticleMoniker = (TextView) v.findViewById(R.id.tvArticleMoniker);
-        tvArticleSnippet = (TextView) v.findViewById(R.id.tvArticleSnippet);
+        tvNoMediaArticleTitle = (TextView) v.findViewById(R.id.tvNoMediaArticleTitle);
+        tvNoMediaArticleMoniker = (TextView) v.findViewById(R.id.tvNoMediaArticleMoniker);
+        tvNoMediaArticleSnippet = (TextView) v.findViewById(R.id.tvNoMediaArticleSnippet);
 
         this.articles = articles;
 
         v.setOnClickListener(this);
     }
 
-    public ImageView getIvArticle() {
-        return ivArticle;
+    public TextView getTvNoMediaArticleTitle() {
+        return tvNoMediaArticleTitle;
     }
 
-    public TextView getTvArticleTitle() {
-        return tvArticleTitle;
+    public void setTvNoMediaArticleTitle(TextView tvNoMediaArticleTitle) {
+        this.tvNoMediaArticleTitle = tvNoMediaArticleTitle;
     }
 
-    public TextView getTvArticleMoniker() {
-        return tvArticleMoniker;
+    public TextView getTvNoMediaArticleMoniker() {
+        return tvNoMediaArticleMoniker;
     }
 
-    public TextView getTvArticleSnippet() {
-        return tvArticleSnippet;
+    public void setTvNoMediaArticleMoniker(TextView tvNoMediaArticleMoniker) {
+        this.tvNoMediaArticleMoniker = tvNoMediaArticleMoniker;
+    }
+
+    public TextView getTvNoMediaArticleSnippet() {
+        return tvNoMediaArticleSnippet;
+    }
+
+    public void setTvNoMediaArticleSnippet(TextView tvNoMediaArticleSnippet) {
+        this.tvNoMediaArticleSnippet = tvNoMediaArticleSnippet;
     }
 
     @Override

@@ -66,6 +66,7 @@ public class ArticleService {
                 } else {
                     for (ArticleListener listener : listeners) {
                         listener.onArticleLoadFailed(response.message());
+
                     }
                 }
             }
@@ -74,6 +75,7 @@ public class ArticleService {
             public void onFailure(Call<Article> call, Throwable t) {
                 for (ArticleListener listener : listeners) {
                     listener.onArticleLoadFailed(t.getMessage());
+
                 }
             }
 

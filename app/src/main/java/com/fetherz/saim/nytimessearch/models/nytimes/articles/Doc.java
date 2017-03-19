@@ -1,5 +1,6 @@
 package com.fetherz.saim.nytimessearch.models.nytimes.articles;
 
+import com.fetherz.saim.nytimessearch.R;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -146,6 +147,20 @@ public class Doc {
 
     public String getNewsDesk() {
         return newsDesk;
+    }
+
+    public int getMonikerBackground(){
+        if(newsDesk != null && !newsDesk.isEmpty()) {
+            if (newsDesk.toLowerCase().contains("arts")) {
+                return R.color.art_moniker;
+            } else if (newsDesk.toLowerCase().contains("fashion")) {
+                return R.color.fashion_moniker;
+            } else if (newsDesk.toLowerCase().contains("sports")) {
+                return R.color.sports_moniker;
+            }
+        }
+
+        return R.color.default_moniker;
     }
 
     public void setNewsDesk(String newsDesk) {

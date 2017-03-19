@@ -58,6 +58,12 @@ public class ArticleSearchSettingsDialog extends DialogFragment {
     CheckBox cbSports;
 
     /**
+     * Define the listener of the interface type
+     * listener will the activity instance containing fragment
+     */
+    private OnItemSelectedListener listener;
+
+    /**
      *
      */
     public ArticleSearchSettingsDialog(){}
@@ -70,12 +76,6 @@ public class ArticleSearchSettingsDialog extends DialogFragment {
         ArticleSearchSettingsDialog articleSearchSettingsDialog = new ArticleSearchSettingsDialog();
         return articleSearchSettingsDialog;
     }
-
-    /**
-     * Define the listener of the interface type
-     * listener will the activity instance containing fragment
-     */
-    private OnItemSelectedListener listener;
 
     /**
      *

@@ -129,7 +129,7 @@ public class FilterSelection {
         }
 
         if(this.fashion){
-            news_desks.add("\"fashion\"");
+            news_desks.add("\"fashion %26 style\"");
         }
 
         if(this.sports){

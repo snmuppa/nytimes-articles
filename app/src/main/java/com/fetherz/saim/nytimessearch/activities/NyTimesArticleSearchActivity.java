@@ -3,10 +3,10 @@ package com.fetherz.saim.nytimessearch.activities;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -25,6 +25,7 @@ import com.fetherz.saim.nytimessearch.models.search.settings.FilterSelection;
 import com.fetherz.saim.nytimessearch.services.ArticleService;
 import com.fetherz.saim.nytimessearch.utils.LogUtil;
 
+import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +37,7 @@ import butterknife.ButterKnife;
 /**
  *
  */
-public class NyTimesArticleSearchActivity extends AppCompatActivity
+public class NyTimesArticleSearchActivity extends BaseActivity
         implements ArticleSearchSettingsDialog.OnItemSelectedListener,
         DatePickerDialog.OnDateSetListener,
         ArticleService.ArticleListener{
@@ -62,7 +63,14 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity
     ArticleService articleService;
     Article article;
 
-    static final String API_KEY_VALUE = "ca395a3acdfb48cb9ccfd66c7171f522";
+    static final List<String> API_KEYS = new ArrayList<>();
+
+    static { //hack: as the API throttles heavily, and occasionally blocks quick contigous requests, this eliminates that issue by using multiple authorities
+        API_KEYS.add("ca395a3acdfb48cb9ccfd66c7171f522");
+        API_KEYS.add("6c0ec4c8f91b4be69a2a454bac24a9e2");
+        API_KEYS.add("1cf6be05020f46dea300c7e1f9dda6a8");
+    }
+
     static final int START_PAGE = 0;
     List<Doc> articles;
 
@@ -82,37 +90,6 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity
         setSwipeRefreshContainer();
         articleService = ((ArticleApplication) getApplicationContext()).getArticleService();
         articleService.addListener(this);
-    }
-
-    private void setRecyclerView() {
-        // Initialize articles
-        articles = new ArrayList<>();
-
-        // Create adapter passing in the initial article data
-        articleRecyclerViewAdapter = new ArticleRecyclerViewAdapter(articles);
-
-        // Attach the adapter to the recyclerview to populate items
-        rvArticles.setAdapter(articleRecyclerViewAdapter);
-
-        // First param is number of columns and second param is orientation i.e Vertical or Horizontal
-        StaggeredGridLayoutManager gridLayoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-
-        // Set layout manager to position the items
-        rvArticles.setLayoutManager(gridLayoutManager);
-
-        // Retain an instance so that you can call `resetState()` for fresh searches
-        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                fetchArticles(page); //ny times API page numbers start from 0
-            }
-        };
-
-        // Adds the scroll listener to RecyclerView
-        rvArticles.addOnScrollListener(scrollListener);
     }
 
     /**
@@ -151,65 +128,6 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity
 
     /**
      *
-     */
-    private void fetchArticlesFresh() {
-        //reset the endless scroller before re-fetching based on new query
-        resetEndlessScroller();
-
-        // perform query here
-        fetchArticles(START_PAGE);
-    }
-
-    /**
-     *
-     * @param page
-     */
-    private void fetchArticles(int page) {
-        FilterSelection filterSelection = FilterSelection.getInstance();//get the settings instance
-        try {
-            articleService.requestArticles(API_KEY_VALUE,
-                    currentSearchQuery,
-                    filterSelection.getNewsDeskQueryParam(),
-                    filterSelection.getBeginDateQueryParam(),
-                    filterSelection.getSortOrderQueryParam(),
-                    page);
-        } catch (InvalidObjectException e) {
-            LogUtil.logE("Invalid_Begin_Date", e.getMessage());
-        }
-    }
-
-    /**
-     *
-     */
-    private void setSwipeRefreshContainer() {
-        // Lookup the swipe container view
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(() -> {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-                swipeRefreshArticleData();
-        });
-
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-    }
-
-    /**
-     *
-     */
-    private void swipeRefreshArticleData() {
-        //reset the articles before refresh
-        fetchArticlesFresh();
-    }
-
-    /**
-     *
      * @param item
      * @return
      */
@@ -227,12 +145,6 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void openSettings() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        articleSearchSettingsDialog = ArticleSearchSettingsDialog.newInstance();
-        articleSearchSettingsDialog.show(fragmentManager, "search_settings");
     }
 
     /**
@@ -286,7 +198,7 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity
      */
     @Override
     public void onArticleLoadFailed(String message) {
-        LogUtil.logD("Failed", message);
+        LogUtil.logE("Failed", message);
     }
 
     /**
@@ -296,6 +208,133 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity
     public void onDestroy() {
         articleService.removeListener(this);
         super.onDestroy();
+    }
+
+    private void openSettings() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        articleSearchSettingsDialog = ArticleSearchSettingsDialog.newInstance();
+        articleSearchSettingsDialog.show(fragmentManager, "search_settings");
+    }
+
+    /**
+     *
+     */
+    private void fetchArticlesFresh() {
+        //reset the endless scroller before re-fetching based on new query
+        resetEndlessScroller();
+
+        // perform query here
+        fetchArticles(START_PAGE);
+    }
+
+    /**
+     *
+     * @param page
+     */
+    private void fetchArticles(int page) {
+
+        if(!isOnline()){ //if the failure is due to no internet then
+            Snackbar.make(clSearchActivity, "No internet.", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            return;
+        }
+
+        FilterSelection filterSelection = FilterSelection.getInstance();//get the settings instance
+        try {
+
+            String apiKey = API_KEYS.get(page % 3);
+
+            articleService.requestArticles(apiKey,
+                    currentSearchQuery,
+                    filterSelection.getNewsDeskQueryParam(),
+                    filterSelection.getBeginDateQueryParam(),
+                    filterSelection.getSortOrderQueryParam(),
+                    page);
+        } catch (IndexOutOfBoundsException e){
+            LogUtil.logE("Invalid_Key_Request", e.getMessage());
+        }
+        catch (InvalidObjectException e) {
+            LogUtil.logE("Invalid_Begin_Date", e.getMessage());
+        }
+    }
+
+    /**
+     *
+     */
+    private void setSwipeRefreshContainer() {
+        // Lookup the swipe container view
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(() -> {
+            // Your code to refresh the list here.
+            // Make sure you call swipeContainer.setRefreshing(false)
+            // once the network request has completed successfully.
+            swipeRefreshArticleData();
+        });
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+    }
+
+    /**
+     *
+     */
+    private void swipeRefreshArticleData() {
+        //reset the articles before refresh
+        fetchArticlesFresh();
+    }
+
+    /**
+     *
+     */
+    private void setRecyclerView() {
+        // Initialize articles
+        articles = new ArrayList<>();
+
+        // Create adapter passing in the initial article data
+        articleRecyclerViewAdapter = new ArticleRecyclerViewAdapter(articles);
+
+        // Attach the adapter to the recyclerview to populate items
+        rvArticles.setAdapter(articleRecyclerViewAdapter);
+
+        // First param is number of columns and second param is orientation i.e Vertical or Horizontal
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+        // Set layout manager to position the items
+        rvArticles.setLayoutManager(gridLayoutManager);
+
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                fetchArticles(page); //ny times API page numbers start from 0
+            }
+        };
+
+        // Adds the scroll listener to RecyclerView
+        rvArticles.addOnScrollListener(scrollListener);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private boolean isOnline(){
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (InterruptedException | IOException e) {
+            LogUtil.logE("Failed_Connection", e.getMessage());
+        }
+        return false;
     }
 
     /**
