@@ -1,9 +1,9 @@
 
-# Project 2 - *Name of App Here*
+# Project 2 - *New York Times Article Search Client*
 
 **Name of your app** is an android app that allows a user to search for articles on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
-Time spent: **X** hours spent in total
+Time spent: **20** hours spent in total
 
 ## User Stories
 
@@ -21,7 +21,7 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-* [ ] Implements robust error handling, [check if internet is available](http://guides.codepath.com/android/Sending-and-Managing-Network-Requests#checking-for-network-connectivity), handle error cases, network failures
+* [x] Implements robust error handling, [check if internet is available](http://guides.codepath.com/android/Sending-and-Managing-Network-Requests#checking-for-network-connectivity), handle error cases, network failures
 * [x] Used the **ActionBar SearchView** or custom layout as the query box instead of an EditText
 * [x] User can **share an article link** to their friends or email it to themselves
 * [x] Replaced Filter Settings Activity with a lightweight modal overlay
@@ -48,18 +48,21 @@ Implemented swipe to refresh.
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://raw.githubusercontent.com/snmuppa/nytimes-articles/master/demos/NyTimesArticleSearch-v1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
 Describe any challenges encountered while building the app.
+Facing some issues while binding views using ButterKnife in ViewHolder classes.
 
 ## Open-source libraries used
 
-- [Android Async HTTP](https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
-- [Picasso](http://square.github.io/picasso/) - Image loading and caching library for Android
+- [Retrofit](https://github.com/square/retrofit) - Type-safe HTTP client for Android and Java by Square, Inc.
+- [Glide](https://github.com/bumptech/glide) - An image loading and caching library for Android focused on smooth scrolling.
+- [Butter Knife](https://github.com/JakeWharton/butterknife) - Bind Android views and callbacks to fields and methods.
+- [Gson](https://github.com/google/gson) - A Java serialization/deserialization library that can convert Java Objects into JSON and back.
 
 ## License
 
