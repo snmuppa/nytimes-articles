@@ -36,7 +36,9 @@ import butterknife.ButterKnife;
 /**
  *
  */
-public class NyTimesArticleSearchActivity extends AppCompatActivity implements ArticleSearchSettingsDialog.OnItemSelectedListener, DatePickerDialog.OnDateSetListener,
+public class NyTimesArticleSearchActivity extends AppCompatActivity
+        implements ArticleSearchSettingsDialog.OnItemSelectedListener,
+        DatePickerDialog.OnDateSetListener,
         ArticleService.ArticleListener{
 
     @BindView(R.id.toolbar)

@@ -53,11 +53,11 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         switch (viewType) {
             case Doc.ARTICLE_WITH_MEDIA:
                 View mediaArticleView = inflater.inflate(R.layout.multi_media_article, viewGroup, false);
-                viewHolder = new MultiMediaArticleViewHolder(mediaArticleView);
+                viewHolder = new MultiMediaArticleViewHolder(mediaArticleView, articles);
                 break;
             default:
                 View nonMediaArticleView = inflater.inflate(R.layout.multi_media_article, viewGroup, false); //TODO: replace with non media article
-                viewHolder = new MultiMediaArticleViewHolder(nonMediaArticleView);
+                viewHolder = new MultiMediaArticleViewHolder(nonMediaArticleView, articles);
                 break;
         }
 
