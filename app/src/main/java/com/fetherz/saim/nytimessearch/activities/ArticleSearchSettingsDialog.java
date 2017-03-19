@@ -49,7 +49,7 @@ public class ArticleSearchSettingsDialog extends DialogFragment {
     EditText etBeginDate;
 
     @BindView(R.id.cbArts)
-    CheckBox artsCheckbox;
+    CheckBox cbArts;
 
     @BindView(R.id.cbFashion)
     CheckBox cbFashion;
@@ -71,7 +71,6 @@ public class ArticleSearchSettingsDialog extends DialogFragment {
         return articleSearchSettingsDialog;
     }
 
-
     /**
      * Define the listener of the interface type
      * listener will the activity instance containing fragment
@@ -90,7 +89,12 @@ public class ArticleSearchSettingsDialog extends DialogFragment {
         View view = getActivity().getLayoutInflater().inflate(R.layout.content_article_search_settings, container);
         ButterKnife.bind(this, view);
 
-        setDate(new Date());
+        FilterSelection filterSelection = FilterSelection.getInstance();
+        etBeginDate.setText(filterSelection.getBeginDateMMddyyyy());
+        spnSortOrder.setSelection(filterSelection.getSortOrder().ordinal());
+        cbArts.setChecked(filterSelection.isArtsSelected());
+        cbFashion.setChecked(filterSelection.isFashionSelected());
+        cbSports.setChecked(filterSelection.isSportsSelected());
 
         return view;
     }
@@ -125,10 +129,14 @@ public class ArticleSearchSettingsDialog extends DialogFragment {
      */
     @OnClick(R.id.fabSave)
     public void onSave(){
+        FilterSelection filterSelection = FilterSelection.getInstance();
+        filterSelection.setBeginDate(etBeginDate.getText().toString());
+        filterSelection.setSortOrder(spnSortOrder.getSelectedItemPosition());
+        filterSelection.setArts(cbArts.isChecked());
+        filterSelection.setFashion(cbFashion.isChecked());
+        filterSelection.setSports(cbSports.isChecked());
 
-        //TODO: set the FilterSelection with updated selection items
-
-        listener.onSearchSettingsSelected(FilterSelection.getInstance()); //pass the updated instance of the FilterSelection class
+        listener.onSearchSettingsSelected(filterSelection); //pass the updated instance of the FilterSelection class
         dismiss();
     }
 

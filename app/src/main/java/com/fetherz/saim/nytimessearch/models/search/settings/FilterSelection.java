@@ -2,10 +2,13 @@ package com.fetherz.saim.nytimessearch.models.search.settings;
 
 import android.text.TextUtils;
 
+import com.fetherz.saim.nytimessearch.utils.LogUtil;
+
+import java.io.InvalidObjectException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import java.text.SimpleDateFormat;
 
 import static com.fetherz.saim.nytimessearch.models.search.settings.SortOrder.OLDEST;
 
@@ -19,9 +22,10 @@ public class FilterSelection {
     private FilterSelection(){
         arts = false;
         fashion = false;
-        sports = false;
-        beginDate = new Date();
-        sortOrder = SortOrder.NONE;
+        sports = true;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        beginDate = dateFormat.format(new Date());
+        sortOrder = SortOrder.OLDEST;
     }
 
     public static FilterSelection getInstance(){
@@ -36,7 +40,7 @@ public class FilterSelection {
     private boolean fashion;
     private boolean sports;
 
-    private Date beginDate;
+    private String beginDate;
 
     private SortOrder sortOrder;
 
@@ -64,22 +68,29 @@ public class FilterSelection {
         this.sports = sports;
     }
 
-    public Date getBeginDate() {
+    public String getBeginDate() {
         return beginDate;
     }
 
-    public void setBeginDate(Date beginDate) {
+    public void setBeginDate(String beginDate) {
         this.beginDate = beginDate;
     }
 
-    public String getBeginDateQueryParam(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        return dateFormat.format(beginDate);
+    public String getBeginDateQueryParam() throws InvalidObjectException {
+        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+        Date startDate;
+        try {
+            startDate = df.parse(beginDate);
+            df = new SimpleDateFormat("yyyyMMdd");
+            return df.format(startDate);
+        } catch (ParseException e) {
+            LogUtil.logE("DATE_PARSE_ERROR", e.getMessage());
+            throw new InvalidObjectException("Invalid date format.");
+        }
     }
 
     public String getBeginDateMMddyyyy(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        return dateFormat.format(beginDate);
+        return beginDate;
     }
 
     public SortOrder getSortOrder() {

@@ -3,6 +3,7 @@
     <string name="action_settings">Settings</string>
 
     <string-array name="article_search_sort_order">
+        <item>None</item>
         <item>Oldest</item>
         <item>Newest</item>
     </string-array>

@@ -3,7 +3,6 @@ package com.fetherz.saim.nytimessearch.activities;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -26,6 +25,7 @@ import com.fetherz.saim.nytimessearch.models.search.settings.FilterSelection;
 import com.fetherz.saim.nytimessearch.services.ArticleService;
 import com.fetherz.saim.nytimessearch.utils.LogUtil;
 
+import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -105,7 +105,7 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                fetchArticles(currentSearchQuery, page); //ny times API page numbers start from 0
+                fetchArticles(page); //ny times API page numbers start from 0
             }
         };
 
@@ -127,15 +127,10 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchQuery) {
-
-                //reset the endless scroller before re-fetching based on new query
-                resetEndlessScroller();
-
                 //cache the current query
                 currentSearchQuery = searchQuery;
 
-                // perform query here
-                fetchArticles(currentSearchQuery, START_PAGE);
+                fetchArticlesFresh();
 
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
@@ -152,22 +147,48 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void fetchArticles(String searchQuery, int page) {
-        articleService.requestArticles(API_KEY_VALUE, searchQuery, "news_desk:(\"Sports\")", "20160101", "newest", page);
+    /**
+     *
+     */
+    private void fetchArticlesFresh() {
+        //reset the endless scroller before re-fetching based on new query
+        resetEndlessScroller();
+
+        // perform query here
+        fetchArticles(START_PAGE);
     }
 
+    /**
+     *
+     * @param page
+     */
+    private void fetchArticles(int page) {
+        FilterSelection filterSelection = FilterSelection.getInstance();//get the settings instance
+        try {
+            articleService.requestArticles(API_KEY_VALUE,
+                    currentSearchQuery,
+                    filterSelection.getNewsDeskQueryParam(),
+                    filterSelection.getBeginDateQueryParam(),
+                    filterSelection.getSortOrderQueryParam(),
+                    page);
+        } catch (InvalidObjectException e) {
+            LogUtil.logE("Invalid_Begin_Date", e.getMessage());
+        }
+    }
+
+    /**
+     *
+     */
     private void setSwipeRefreshContainer() {
         // Lookup the swipe container view
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
         // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
+        swipeContainer.setOnRefreshListener(() -> {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 swipeRefreshArticleData();
-            }
         });
 
         // Configure the refreshing colors
@@ -177,12 +198,12 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
                 android.R.color.holo_red_light);
     }
 
+    /**
+     *
+     */
     private void swipeRefreshArticleData() {
         //reset the articles before refresh
-        resetEndlessScroller();
-
-        //fetch data based on current cached query, starting at page 0
-        fetchArticles(currentSearchQuery, START_PAGE);
+        fetchArticlesFresh();
     }
 
     /**
@@ -235,7 +256,7 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
      */
     @Override
     public void onSearchSettingsSelected(FilterSelection currentFilters) {
-        Snackbar.make(clSearchActivity, currentFilters.getBeginDateMMddyyyy(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        fetchArticlesFresh();//freshly fetch on settings update
     }
 
     /**
@@ -275,6 +296,9 @@ public class NyTimesArticleSearchActivity extends AppCompatActivity implements A
         super.onDestroy();
     }
 
+    /**
+     *
+     */
     private void resetEndlessScroller() {
         // 1. First, clear the array of data
         articles.clear();
