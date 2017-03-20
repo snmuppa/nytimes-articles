@@ -1,6 +1,6 @@
 package com.fetherz.saim.nytimessearch.viewholders;
 
-import android.app.PendingIntent;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.fetherz.saim.nytimessearch.R;
+import com.fetherz.saim.nytimessearch.chromecustomtab.CustomTabActivityHelper;
 import com.fetherz.saim.nytimessearch.models.nytimes.articles.Doc;
 import com.fetherz.saim.nytimessearch.utils.LogUtil;
 
@@ -81,37 +82,31 @@ public class NoMediaArticleViewHolder extends RecyclerView.ViewHolder implements
         // create an intent builder
         CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
 
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_social);
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, uri);
-
-        int requestCode = 100;
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                requestCode,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        intentBuilder.setActionButton(bitmap, "Share Link", pendingIntent, true);
+        Bitmap bitmap = BitmapFactory.decodeResource(v.getContext().getResources(), R.mipmap.ic_launcher_social);
 
         // Begin customizing
         // set toolbar colors
-        intentBuilder.setToolbarColor(ContextCompat.getColor(context, R.color.theme_primary_light));
-        intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.theme_primary_dark));
+        intentBuilder.setToolbarColor(ContextCompat.getColor(v.getContext(), R.color.theme_primary_light));
+        intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(v.getContext(), R.color.theme_primary_dark));
 
-        // set start and exit animations
-        intentBuilder.setStartAnimations(context, R.anim.slide_in_right, R.anim.slide_out_left);
-        intentBuilder.setExitAnimations(context, android.R.anim.slide_in_left,
-                android.R.anim.slide_out_right);
+        intentBuilder.setShowTitle(true);
+        intentBuilder.addDefaultShareMenuItem();
+        intentBuilder.enableUrlBarHiding();
 
         // build custom tabs intent
         CustomTabsIntent customTabsIntent = intentBuilder.build();
 
+        if (v.getContext() instanceof Activity) {
+            CustomTabActivityHelper.openCustomTab((Activity) v.getContext(), customTabsIntent, uri,
+                    (activity, uri1) -> {
+                        Intent intent1 = new Intent(Intent.ACTION_VIEW, uri1);
+                        activity.startActivity(intent1);
+                    });
+        }
+        else{
+            v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        }
 
         LogUtil.logD("ARTICLE_ACCESS", "Article clicked: " + article);
-
-        // launch the url
-        customTabsIntent.launchUrl(context, uri);
     }
 }
